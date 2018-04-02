@@ -27,8 +27,14 @@ export default class ShoppingCart {
      */
     addEventListeners() {
         // Change me!
+        this.removeAllEl.addEventListener("click", () => {
+            this.removeAll();
+        });
+        this.cartEl.addEventListener("click", () => {
+            this.removeItem(event.target.dataset.itemId);
+        });
     }
-
+    
     /**
      * Adds new item to the cart
      * or increments its quantity if item is already present.
@@ -36,6 +42,7 @@ export default class ShoppingCart {
      * @returns {undefined}
      */
     addItem(item) {
+        // console.log(this.isItemInCart(item.id));
         if (!this.isItemInCart(item.id)) {
             this.addNewItem(item);
         } else {
@@ -60,7 +67,16 @@ export default class ShoppingCart {
      * @returns {undefined}
      */
     incrementItem(item) {
-        // Change me!
+        if (this.cartEl.children.length !== 0) {
+            [...this.cartEl.children].forEach(elem => {
+                if (elem.dataset.itemId === item.id) {
+                    elem.querySelector(".item-qty").innerHTML = Number(elem.dataset.itemQty) + 1;
+                    elem.querySelector(".item-price").innerHTML = Number(elem.dataset.itemTotal) + Number(item.price);
+                    elem.dataset.itemQty = Number(elem.dataset.itemQty) + 1;
+                    elem.dataset.itemTotal = Number(elem.dataset.itemTotal) + Number(item.price);
+                }
+            });
+        }
     }
 
     /**
@@ -70,6 +86,15 @@ export default class ShoppingCart {
      */
     isItemInCart(id) {
         // Change me!
+        if (this.cartEl.children.length !== 0) {
+            return [...this.cartEl.children].reduce((acc, item) => {
+                if (item.dataset.itemId === id) {
+                    acc = true;
+                }
+                return acc;
+            }, false);
+        }
+        return false;
     }
 
     /**
@@ -77,7 +102,8 @@ export default class ShoppingCart {
      * @returns {boolean} true if there's no items in cart, false otherwise
      */
     isCartEmpty() {
-        // Change me!
+        // console.log(this.cartEl.children.length === 0);
+        return this.cartEl.children.length === 0;
     }
 
     /**
@@ -85,7 +111,8 @@ export default class ShoppingCart {
      * @returns {undefined}
      */
     removeAll() {
-        // Change me!
+        this.cartEl.innerHTML = "";
+        this.updateCartState();
     }
 
     /**
@@ -94,7 +121,14 @@ export default class ShoppingCart {
      * @returns {undefined}
      */
     removeItem(id) {
-        // Change me!
+        let delEl = null;
+        [...this.cartEl.children].forEach(item => {
+            if (item.dataset.itemId === id) {
+                delEl = item;
+            }
+        });
+        this.cartEl.removeChild(delEl);
+        this.updateCartState();
     }
 
     /**
@@ -112,7 +146,7 @@ export default class ShoppingCart {
      * @returns {undefined}
      */
     updateTotal() {
-        // Change me!
+        this.totalEl.innerHTML = Number(this.getTotalSum());
     }
 
     /**
@@ -120,7 +154,13 @@ export default class ShoppingCart {
      * @returns {number} Total sum
      */
     getTotalSum() {
-        // Change me!
+        if (this.cartEl.children.length !== 0) {
+            return [...this.cartEl.children].reduce((acc, item) => {
+                acc += Number(item.dataset.itemTotal);
+                return acc;
+            }, 0);
+        }
+        return 0;
     }
 
     /**
@@ -129,9 +169,9 @@ export default class ShoppingCart {
      */
     updateNoItemsMessage() {
         if (this.isCartEmpty()) {
-            // Change me!
+            this.emptyCartEl.classList.remove("d-none");
         } else {
-            // Change me!
+            this.emptyCartEl.classList.add("d-none");
         }
     }
 
@@ -140,6 +180,10 @@ export default class ShoppingCart {
      * @returns {undefined}
      */
     updateRemoveAllButton() {
-        // Change me!
+        if (this.isCartEmpty()) {
+            this.removeAllEl.classList.add("d-none");
+        } else {
+            this.removeAllEl.classList.remove("d-none");
+        }
     }
 }

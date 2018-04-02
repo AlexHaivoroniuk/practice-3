@@ -32,9 +32,10 @@ function checkZebra() {
 describe("Task 3: Table Filterer", () => {
 
     beforeEach(() => {
-        table = document.createElement("table");
+        table = document.createElement("tbody");
         renderTable(table, albums, ["album", "performer", "genre", "year"]);
     });
+ 
 
     it("has to leave table as it is if no filters provided", () => {
         filterTable(table, {});
@@ -45,6 +46,9 @@ describe("Task 3: Table Filterer", () => {
 
     it("has to leave only 3 rows for year 2007", () => {
         filterTable(table, { year: 2007 });
+        console.log("-----------------------");
+        console.log(getVisibleRows(table));
+        console.log("-----------------------");
         assert.equal(getVisibleRows(table).length, 3);
         checkIndexation(table);
         checkZebra(table);
@@ -52,6 +56,9 @@ describe("Task 3: Table Filterer", () => {
 
     it("has to filter by several columns", () => {
         filterTable(table, { year: 19, genre: "rock music" });
+        console.log("-----------------------");
+        console.log(getVisibleRows(table));
+        console.log("-----------------------");
         assert.equal(getVisibleRows(table).length, 10);
         checkIndexation(table);
         checkZebra(table);
